@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Bootstrap 4 header Example </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"
+            integrity="sha512-1QvjE7BtotQjkq8PxLeF6P46gEpBRXuskzIVgjFpekzFVF4yjRgrQvTG1MTOJ3yQgvTteKAcO7DSZI92+u/yZw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<style>
+    body {
+        background: #f6fbff !important;
+    }
+    .container {
+        padding: 2rem 0rem;
+    }
+
+    h4 {
+        margin: 2rem 0rem 1rem;
+    }
+
+    .table-image,
+    td, th {
+        vertical-align: middle;
+    }
+
+    h1 {
+        position: relative;
+        padding: 10px;
+        margin: 10px;
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 40px;
+        color: red;
+        -webkit-transition: all 0.4s ease 0s;
+        -o-transition: all 0.4s ease 0s;
+        transition: all 0.4s ease 0s;
+        text-align: center;
+    }
+    .onright > .message_item {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 0px  !important;
+        background: #65ff8d;
+    }
+    .message_item {
+        display: flex;
+        flex-direction: column;
+        background: #9ff1f9;
+        border-radius: 10px;
+        padding: 5px 10px;
+        border-bottom-left-radius: 0px;
+    }
+    .message_display{
+        margin-bottom: 10px;
+        display: flex;
+        width: 100%;
+    }
+    .onright {
+        justify-content: flex-end;
+    }
+    .message_subject {
+        border-bottom: 1px solid silver;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    #messages {
+        height: 500px !important;
+        overflow: auto !important;
+    }
+    .scrollIt {
+        width: 50% !important;
+    }
+</style>
+<body>
+<div class="container">
+    <div class="row">
+        <div class=" col-md-6">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Welcome Username</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="form-group">
+                            <label for="receiverId">Recipient</label>
+                            <select id="receiverId" class="form-select receiver" aria-label="Default select example">
+                                <option th:value="0" selected>Open this select menu</option>
+                                <option th:each="user : ${allUsers}" th:value="${user.id}"
+                                        th:text="${user.email}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control userId" th:value="${currentUser.id}" th:name="senderId">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" class="form-control" id="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="body">Message</label>
+                            <textarea class="form-control" id="body" rows="4"
+                                      required></textarea>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Send" onclick="sendMessage()">
+                    </div>
+                </div>
+        </div>
+
+        <div class="col-md-6" style="margin-top: 50px ">
+            <div class="messages_title" style="font-weight: 600;font-size: 25px"></div>
+            <div id="messages">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/webjars/stomp-websocket/2.3.4/stomp.js}" type="text/javascript"></script>
+<script th:src="@{http://localhost:8080/js/email.js}">
+</script>
+<script>
+    let user = document.querySelector('.userId').value
+    connect(user)
+    document.querySelector('.receiver').addEventListener('change', () => {
+        var user = document.querySelector('#receiverId').value;
+        // var user = document.querySelector('#messages').text;
+        // var user = document.querySelector('#messages').innerText;
+        var username = document.querySelector(`option[value='${user}']`).innerText;
+        document.querySelector('.messages_title').innerText = `Message with ${username}`;
+        document.querySelector('#messages').innerHTML = '';
+        getMessagesByReceiverId(document.querySelector('.receiver').value)
+    })
+
+</script>
+</html>
