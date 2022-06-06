@@ -9,7 +9,7 @@ import uz.task5.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
 
-    boolean existsUserByEmail(String email);
+    boolean existsByEmail(String email);
     User findByEmail(String email);
 
 

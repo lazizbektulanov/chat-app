@@ -32,6 +32,7 @@ public class UserController {
         List<User> allUsers = userService.getAllUsers();
         model.addAttribute("currentUser",currentUser);
         model.addAttribute("allUsers",allUsers);
+        //TODO clear heroku database null in currentUserId
         return "messages";
     }
     @ModelAttribute("subjectFormDto")

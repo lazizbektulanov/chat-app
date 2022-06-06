@@ -18,11 +18,11 @@ public class UserService {
 
 
     public User login(User user) {
-        User currentUser = user;
-        if(!userRepository.existsUserByEmail(user.getEmail())){
-            currentUser = userRepository.save(new User(user.getEmail()));
+        User userByEmail = userRepository.findByEmail(user.getEmail());
+        if(userByEmail==null){
+            userByEmail = userRepository.save(new User(user.getEmail()));
         }
-        return currentUser;
+        return userByEmail;
     }
 
     public List<User> getAllUsers() {

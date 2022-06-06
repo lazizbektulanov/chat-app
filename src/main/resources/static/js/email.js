@@ -1,7 +1,6 @@
 var stompClient = null;
 
 
-alert('Hello')
 
 function connect(currentUserId) {
     var socket = new SockJS('/chat');
