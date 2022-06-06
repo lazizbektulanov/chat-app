@@ -27,7 +27,7 @@ public class MessageService {
 
 
     public void sendMessage(MessageDto messageDto) {
-        Long chatId = getChatId(messageDto);
+        Long chatId = getChatId(messageDto.getSenderId(), messageDto.getReceiverId());
         Message savedMessage = messageRepository.save(new Message(
                 messageDto.getSubject(),
                 messageDto.getBody(),
@@ -35,6 +35,8 @@ public class MessageService {
                 Long.valueOf(messageDto.getReceiverId()),
                 chatId
         ));
+        System.out.println("Receiver id: " + messageDto.getReceiverId());
+        System.out.println(savedMessage);
         messagingTemplate.convertAndSendToUser(
                 messageDto.getReceiverId(),
                 "/topic/messages",
@@ -42,46 +44,46 @@ public class MessageService {
         );
     }
 
-    private Long getChatId(MessageDto messageDto) {
+    private Long getChatId(String senderId, String receiverId) {
         if (chatRoomRepository.existsBySenderIdAndReceiverId(
-                Long.valueOf(messageDto.getSenderId()),
-                Long.valueOf(messageDto.getReceiverId())
+                Long.valueOf(senderId),
+                Long.valueOf(receiverId)
         )) {
             ChatRoom chatRoomBySenderIdAndReceiverId =
                     chatRoomRepository.getBySenderIdAndReceiverId(
-                            Long.valueOf(messageDto.getSenderId()),
-                            Long.valueOf(messageDto.getReceiverId())
+                            Long.valueOf(senderId),
+                            Long.valueOf(receiverId)
                     );
             return chatRoomBySenderIdAndReceiverId.getChatId();
         } else if (chatRoomRepository.existsByReceiverIdAndSenderId(
-                Long.valueOf(messageDto.getSenderId()),
-                Long.valueOf(messageDto.getReceiverId())
+                Long.valueOf(senderId),
+                Long.valueOf(receiverId)
         )) {
             ChatRoom chatRoomByReceiverIdAndSenderId =
                     chatRoomRepository.getByReceiverIdAndSenderId(
-                            Long.valueOf(messageDto.getSenderId()),
-                            Long.valueOf(messageDto.getReceiverId())
+                            Long.valueOf(senderId),
+                            Long.valueOf(receiverId)
                     );
             return chatRoomByReceiverIdAndSenderId.getChatId();
         } else {
-            Long chatId = Long.valueOf(messageDto.getSenderId() + messageDto.getReceiverId());
+            Long chatId = Long.valueOf(senderId + receiverId);
             chatRoomRepository.save(new ChatRoom(
                     chatId,
-                    Long.valueOf(messageDto.getSenderId()),
-                    Long.valueOf(messageDto.getReceiverId())
+                    Long.valueOf(senderId),
+                    Long.valueOf(receiverId)
             ));
+            if (senderId.equals(receiverId)) return chatId;
             chatRoomRepository.save(new ChatRoom(
                     chatId,
-                    Long.valueOf(messageDto.getReceiverId()),
-                    Long.valueOf(messageDto.getSenderId())
+                    Long.valueOf(receiverId),
+                    Long.valueOf(senderId)
             ));
             return chatId;
         }
     }
 
     public List<MessageProjection> getPersonalChatMessages(String senderId, String receiverId) {
-        Long chatId = Long.valueOf(senderId+receiverId);
-        List<MessageProjection> messagesByChatId = messageRepository.findMessagesByChatId(chatId);
-        return messagesByChatId;
+        Long chatId = getChatId(senderId, receiverId);
+        return messageRepository.findMessagesByChatId(chatId);
     }
 }

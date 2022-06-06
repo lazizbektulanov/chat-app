@@ -10,6 +10,7 @@ function connect(currentUserId) {
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/user/' + currentUserId + '/topic/messages', function (message) {
+            // console.log('Check: ',message)
             showMessage(JSON.parse(message.body));
         })
     })

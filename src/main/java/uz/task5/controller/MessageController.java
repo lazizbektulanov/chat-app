@@ -3,10 +3,7 @@ package uz.task5.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.task5.payload.MessageDto;
 import uz.task5.projection.MessageProjection;
 import uz.task5.service.MessageService;
@@ -15,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class MessageController {
 
     private final MessageService messageService;
@@ -34,5 +32,4 @@ public class MessageController {
                                                            @PathVariable String senderId){
         return messageService.getPersonalChatMessages(senderId,receiverId);
     }
-
 }
