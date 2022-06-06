@@ -1,7 +1,6 @@
 var stompClient = null;
 
 
-
 function connect(currentUserId) {
     var socket = new SockJS('/chat');
     stompClient = Stomp.over(socket)
@@ -32,7 +31,24 @@ function sendMessage() {
 }
 
 
+// function showMessage(message) {
+//     var isRight = '';
+//     console.log('message.receiver_id', message.receiver_id)
+//     console.log('message.receiverId', message.receiverId)
+//     console.log('documentbyId receiverId', document.getElementById("receiverId").value)
+//     if (message.senderId == window.user) {
+//         isRight = 'onright'
+//     }
+//     $("#messages").append(`<div class="message_display ${isRight}">
+//                     <div class="message_item">
+//                         <div class="message_subject">${message.subject}</div>
+//                         <div class="message_body">${message.body}</div>
+//                     </div>
+//                 </div>`);
+// }
+
 function showMessage(message) {
+    if (message.sender_id && message.sender_id != document.querySelector('#receiverId').value) return 0;
     var isRight = '';
     if(message.senderId==window.user){
         isRight='onright'
